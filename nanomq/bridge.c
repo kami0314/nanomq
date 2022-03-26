@@ -46,8 +46,9 @@ bridge_publish_msg(const char *topic, uint8_t *payload, uint32_t len, bool dup,
 
 // Disconnect message callback function
 static void
-disconnect_cb(nng_pipe p, nng_pipe_ev ev, void *arg)
+disconnect_cb(nng_pipe p, nng_pipe_ev ev, void *stream, void *arg)
 {
+	printf("disconnect");
 	debug_msg("disconnected");
 }
 
@@ -58,11 +59,12 @@ typedef struct {
 
 // Connack message callback function
 static void
-bridge_connect_cb(nng_pipe p, nng_pipe_ev ev, void *arg)
+bridge_connect_cb(nng_pipe p, nng_pipe_ev ev, void *conn, void *arg)
 {
 	// Connected succeed
 	bridge_param *param = arg;
 	nng_msg *     msg;
+	nng_stream *stream = conn;
 
 	nng_mqtt_msg_alloc(&msg, 0);
 	nng_mqtt_msg_set_packet_type(msg, NNG_MQTT_SUBSCRIBE);
